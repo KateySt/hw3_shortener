@@ -1,3 +1,5 @@
+import pytest
+
 from shared_config import AppConfig, EnvVar, load_config
 
 
@@ -25,3 +27,19 @@ def test_lambda_environment_round_trips():
     assert lambda_config.table_name == "urls-table"
     assert lambda_config.link_ttl_minutes == 7
     assert lambda_config.log_level == "WARN"
+
+
+def test_bootstrap_qualifier_defaults_to_shared_toolkit():
+    assert load_config({}).toolkit_stack_name == "CDKToolkit"
+
+
+def test_bootstrap_qualifier_gives_own_toolkit():
+    config = load_config({EnvVar.BOOTSTRAP_QUALIFIER: "KaTest"})
+    assert config.bootstrap_qualifier == "katest"
+    assert config.toolkit_stack_name == "CDKToolkit-katest"
+
+
+@pytest.mark.parametrize("qualifier", ["has-dash", "waytoolongqualifier", "кирилиця"])
+def test_invalid_bootstrap_qualifier_is_rejected(qualifier):
+    with pytest.raises(ValueError):
+        load_config({EnvVar.BOOTSTRAP_QUALIFIER: qualifier})
