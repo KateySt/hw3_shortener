@@ -1,0 +1,6 @@
+.venv/
+.env
+cdk.out/
+__pycache__/
+.pytest_cache/
+*.pyc
