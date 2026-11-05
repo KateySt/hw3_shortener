@@ -76,6 +76,8 @@ class WeatherForecastStack(Stack):
         api = apigateway.RestApi(
             self,
             "WeatherAPI",
+            rest_api_name=f"{self.stack_name}-api",
+            cloud_watch_role=False,
             deploy_options=apigateway.StageOptions(
                 stage_name="prod",
                 throttling_rate_limit=config.api_rate_limit,
